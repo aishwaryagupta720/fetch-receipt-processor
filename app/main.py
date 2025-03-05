@@ -3,7 +3,7 @@ from app.api.routes import router
 
 app = FastAPI(
     title="Receipt Processor",
-    description="A simple receipt processing API",
+    description="A receipt processing API",
     version="1.0.0"
 )
 
