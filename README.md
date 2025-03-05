@@ -109,7 +109,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 - **Response Example (JSON):**
 ```json
 {
-  "points": 55
+  "points": 17
 }
 ```
 
