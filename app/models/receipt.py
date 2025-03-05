@@ -9,8 +9,8 @@ class Item(BaseModel):
 class Receipt(BaseModel):
     """Defines a receipt schema for validation."""
     retailer: str = Field(..., pattern=r"^[\w\s\-\&]+$", description="Retailer name")
-    purchaseDate: str = Field(..., pattern=r"^\d{4}-\d{2}-\d{2}$", description="YYYY-MM-DD format")
-    purchaseTime: str = Field(..., pattern=r"^\d{2}:\d{2}$", description="24-hour HH:MM format")
+    purchaseDate: str = Field(..., description="YYYY-MM-DD format")
+    purchaseTime: str = Field(..., description="24-hour HH:MM format")
     items: List[Item] = Field(..., min_items=1, description="At least one item is required")
     total: str = Field(..., pattern=r"^\d+\.\d{2}$", description="Total must be a valid decimal format")
 
