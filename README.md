@@ -98,8 +98,7 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 - **Response (JSON):**
 ```json
 {
-  "id": "123e4567-e89b-12d3-a456-426614174000",
-  "points": 55
+  "id": "123e4567-e89b-12d3-a456-426614174000"
 }
 ```
 
