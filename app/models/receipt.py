@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field,validator
 from typing import List
+from datetime import datetime
 
 class Item(BaseModel):
     """Defines an item on the receipt."""
