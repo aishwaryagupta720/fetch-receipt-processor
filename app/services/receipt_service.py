@@ -10,15 +10,23 @@ class ReceiptService:
         self.storage = storage  
 
     def process_receipt(self, receipt: Receipt) -> str:
-        """Stores the receipt and returns a unique receipt ID."""
-        return self.storage.save_receipt(receipt.dict())
+        """Stores the receipt and precomputes points."""
+        receipt_dict = receipt.dict()
+        
 
-    def calculate_points(self, receipt_id: str) -> int:
-        """Fetches the receipt and calculates points."""
-        receipt = self.storage.get_receipt(receipt_id)
-        if not receipt:
-            return None
+        #Save receipt 
+        receipt_id = self.storage.save_receipt(receipt_dict)
+        
+        # Precompute points 
+        points = self.calculate_points(receipt_dict)
 
+        # Store points in memory 
+        self.storage.save_points(receipt_id, points)  
+
+        return receipt_id
+
+    def calculate_points(self, receipt: dict) -> int:
+        """Computes points at receipt submission, so GET is instant."""
         points = 0
 
         # Rule 1: One point for every alphanumeric character in retailer name
@@ -42,7 +50,6 @@ class ReceiptService:
             if len(desc) % 3 == 0:
                 points += math.ceil(float(item["price"]) * 0.2)
 
-
         # Rule 6: 6 points if the day in purchase date is odd
         purchase_date = datetime.strptime(receipt["purchaseDate"], "%Y-%m-%d").date()
         if purchase_date.day % 2 == 1:
@@ -54,3 +61,7 @@ class ReceiptService:
             points += 10
 
         return points
+
+    def get_points(self, receipt_id: str) -> int:
+        """Instantly retrieves precomputed points from memory."""
+        return self.storage.get_points(receipt_id)  

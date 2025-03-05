@@ -15,7 +15,7 @@ def process_receipt(receipt: Receipt, service: ReceiptService = Depends(get_rece
 @router.get("/receipts/{id}/points", response_model=PointsResponse)
 def get_receipt_points(id: str, service: ReceiptService = Depends(get_receipt_service)):
     """Retrieves points for the given receipt ID."""
-    points = service.calculate_points(id)
+    points = service.get_points(id)
     if points is None:
         raise HTTPException(status_code=404, detail="No receipt found for that ID.")
     return {"points": points}
