@@ -49,24 +49,24 @@ cd fetch-receipt-processor
 
 ## **Running the Application with Docker**
 
-### **1️ Build the Docker Image**
+### **1. Build the Docker Image**
 ```sh
 docker build -t fastapi-receipt-processor .
 ```
 
-### **2️ Run the Docker Container**
+### **2. Run the Docker Container**
 ```sh
 docker run -p 8000:8000 fastapi-receipt-processor
 ```
 
 ## **Running the Application on local**
 
-### **Install Dependencies**
+### **1. Install Dependencies**
 ```sh
 pip install -r requirements.txt
 ```
 
-### **Run the FastAPI Application**
+### **2. Run the FastAPI Application**
 ```sh
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
