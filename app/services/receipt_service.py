@@ -6,7 +6,7 @@ class ReceiptService:
     """Handles business logic for receipts using dependency injection."""
 
     def __init__(self, storage: StorageInterface):
-        self.storage = storage  # ✅ Injected storage dependency
+        self.storage = storage  
 
     def process_receipt(self, receipt: Receipt) -> str:
         """Stores the receipt and returns a unique receipt ID."""
