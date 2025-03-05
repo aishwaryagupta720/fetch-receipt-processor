@@ -1,3 +1,4 @@
+import math
 from app.models.receipt import Receipt
 from app.services.storage import StorageInterface
 from datetime import datetime
@@ -39,7 +40,7 @@ class ReceiptService:
         for item in receipt["items"]:
             desc = item["shortDescription"].strip()
             if len(desc) % 3 == 0:
-                points += round(float(item["price"]) * 0.2)
+                points += math.ceil(float(item["price"]) * 0.2)
 
 
         # Rule 6: 6 points if the day in purchase date is odd
