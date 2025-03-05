@@ -37,7 +37,6 @@ class Receipt(BaseModel):
     @classmethod
     def validate_purchase_time(cls, value: str, values: ValidationInfo):
         """Ensure `purchaseTime` is in the past, considering `purchaseDate`."""
-        print(f"values received: {values}")  # Debugging
 
         # Get validated purchaseDate
         purchase_date = datetime.strptime(values.data.get("purchaseDate"), "%Y-%m-%d").date()
