@@ -10,6 +10,7 @@ This is a **FastAPI-based Receipt Processing API** that:
 
 ---
 
+
 ## **Project Structure**
 ```
 fetch-receipt-processor/
@@ -21,11 +22,17 @@ fetch-receipt-processor/
 │   ├── services/
 │   │   ├── receipt_service.py  # Business logic for receipts
 │   │   ├── memory_storage.py   # In-memory thread-safe storage
+│   │   ├── storage.py          # Storage interface for abstraction
+│   ├── dependencies.py      # Dependency injection setup
 │   ├── main.py              # FastAPI app entry point
 │── tests/
+│   ├── test_models.py       # Unit tests for models
+│   ├── test_routes.py       # Unit tests for API routes
+│   ├── test_services.py     # Unit tests for services
 │── Dockerfile               # Docker build configuration
 │── requirements.txt         # Python dependencies
 │── README.md                # Documentation (this file)
+│── LICENSE                  # Project license
 ```
 
 ---
