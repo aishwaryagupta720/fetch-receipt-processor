@@ -1,0 +1,14 @@
+# FastAPI framework
+fastapi==0.110.0
+
+# ASGI Server for running FastAPI
+uvicorn[standard]==0.27.1
+
+# Pydantic for data validation
+pydantic==2.6.4
+
+# Testing dependencies
+pytest==8.0.2
+httpx==0.27.0  # For testing FastAPI endpoints
+
+
