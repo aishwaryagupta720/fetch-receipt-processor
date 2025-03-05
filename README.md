@@ -32,18 +32,27 @@ fetch-receipt-processor/
 
 ## **Installation & Setup**
 
+---
+
 ### **Clone the Repository**
 ```sh
 git clone <repo-url>
 cd fetch-receipt-processor
 ```
 
-### **Create a Virtual Environment**
+## **Running the Application with Docker**
+
+### **1️ Build the Docker Image**
 ```sh
-python -m venv venv
-source venv/bin/activate  # MacOS/Linux
-venv\Scripts\activate  # Windows
+docker build -t fastapi-receipt-processor .
 ```
+
+### **2️ Run the Docker Container**
+```sh
+docker run -p 8000:8000 fastapi-receipt-processor
+```
+
+## **Running the Application on local**
 
 ### **Install Dependencies**
 ```sh
@@ -109,25 +118,6 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 | **Item Description** | If the length of an item description (trimmed) is a multiple of 3, earn `ceil(price * 0.2)` points |
 | **Odd Purchase Day** | 6 points if the purchase date is an odd-numbered day |
 | **Time Bonus** | 10 points if purchase time is between 2:01 PM and 3:59 PM |
-
----
-
-## **Running the Application with Docker**
-
-### **1️ Build the Docker Image**
-```sh
-docker build -t fastapi-receipt-processor .
-```
-
-### **2️ Run the Docker Container**
-```sh
-docker run -p 8000:8000 fastapi-receipt-processor
-```
-
-### **3️ Run with `docker-compose` (Recommended for Production)**
-```sh
-docker-compose up --build
-```
 
 ---
 
