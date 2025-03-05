@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field,validator
+from pydantic import BaseModel, Field,validator,field_validator
 from typing import List
 from datetime import datetime
 
@@ -32,6 +32,25 @@ class Receipt(BaseModel):
             return value  # Store as string (per OpenAPI spec)
         except ValueError:
             raise ValueError("Invalid purchaseTime format. Expected HH:MM (24-hour).")
+        
+    @field_validator("purchaseTime", mode="after")
+    @classmethod
+    def validate_purchase_time(cls, value: str, values):
+        """Ensure `purchaseTime` is in the past, considering `purchaseDate`."""
+        print(f"values received: {values}")  # Debugging
+
+        # Get validated purchaseDate
+        purchase_date = datetime.strptime(values["purchaseDate"], "%Y-%m-%d").date()
+        purchase_time = datetime.strptime(value, "%H:%M").time()
+
+        # Get current time
+        now = datetime.now()
+        purchase_datetime = datetime.combine(purchase_date, purchase_time)
+
+        if purchase_datetime > now:
+            raise ValueError("Purchase cannot be in the future.")
+
+        return value
 
 
 
