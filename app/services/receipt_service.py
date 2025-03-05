@@ -1,34 +1,22 @@
-import threading
-from uuid import uuid4
-from datetime import datetime
 from app.models.receipt import Receipt
+from app.services.storage import StorageInterface
+from datetime import datetime
 
 class ReceiptService:
-    """Thread-safe in-memory receipt store"""
+    """Handles business logic for receipts using dependency injection."""
 
-    receipts_db = {}  # In-memory dictionary storage
-    lock = threading.Lock()  # Lock for thread safety
+    def __init__(self, storage: StorageInterface):
+        self.storage = storage  # ✅ Injected storage dependency
 
-    @staticmethod
-    def process_receipt(receipt: Receipt) -> str:
-        """
-        Stores the receipt and assigns a unique ID (Thread-Safe).
-        """
-        receipt_id = str(uuid4())
-        with ReceiptService.lock:
-            ReceiptService.receipts_db[receipt_id] = receipt.dict()
-        return receipt_id
+    def process_receipt(self, receipt: Receipt) -> str:
+        """Stores the receipt and returns a unique receipt ID."""
+        return self.storage.save_receipt(receipt.dict())
 
-    @staticmethod
-    def calculate_points(receipt_id: str) -> int:
-        """
-        Fetches the receipt and calculates points (Thread-Safe).
-        """
-        with ReceiptService.lock:
-            if receipt_id not in ReceiptService.receipts_db:
-                return None
-
-            receipt = ReceiptService.receipts_db[receipt_id]
+    def calculate_points(self, receipt_id: str) -> int:
+        """Fetches the receipt and calculates points."""
+        receipt = self.storage.get_receipt(receipt_id)
+        if not receipt:
+            return None
 
         points = 0
 
@@ -53,12 +41,13 @@ class ReceiptService:
             if len(desc) % 3 == 0:
                 points += round(float(item["price"]) * 0.2)
 
+
         # Rule 6: 6 points if the day in purchase date is odd
         purchase_date = datetime.strptime(receipt["purchaseDate"], "%Y-%m-%d").date()
         if purchase_date.day % 2 == 1:
             points += 6
 
-        # Rule 7 : 10 points if purchase time is between 2:01 PM and 3:59 PM
+        # Rule 7: 10 points if purchase time is between 2:01 PM and 3:59 PM
         purchase_time = datetime.strptime(receipt["purchaseTime"], "%H:%M").time()
         if (purchase_time.hour == 14 and purchase_time.minute >= 1) or (purchase_time.hour == 15):
             points += 10
