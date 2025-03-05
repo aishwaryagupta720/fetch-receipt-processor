@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field,validator,field_validator
+from pydantic import BaseModel, Field,validator,field_validator,ValidationInfo
 from typing import List
 from datetime import datetime
 
@@ -35,12 +35,12 @@ class Receipt(BaseModel):
         
     @field_validator("purchaseTime", mode="after")
     @classmethod
-    def validate_purchase_time(cls, value: str, values):
+    def validate_purchase_time(cls, value: str, values: ValidationInfo):
         """Ensure `purchaseTime` is in the past, considering `purchaseDate`."""
         print(f"values received: {values}")  # Debugging
 
         # Get validated purchaseDate
-        purchase_date = datetime.strptime(values["purchaseDate"], "%Y-%m-%d").date()
+        purchase_date = datetime.strptime(values.data.get("purchaseDate"), "%Y-%m-%d").date()
         purchase_time = datetime.strptime(value, "%H:%M").time()
 
         # Get current time
@@ -51,6 +51,23 @@ class Receipt(BaseModel):
             raise ValueError("Purchase cannot be in the future.")
 
         return value
+    
+    @field_validator("total", mode="after")
+    @classmethod
+    def validate_total(cls, total: str, values: ValidationInfo):
+        """Ensure `total` matches sum of `items.price` values."""
+        items = values.data.get("items")  
+        
+        if not items:
+            raise ValueError("Items list must be provided before validating total.")
+
+        total_price = sum(float(item.price) for item in items)  
+        total_value = float(total)
+
+        if round(total_price, 2) != round(total_value, 2):
+            raise ValueError(f"Total ({total}) does not match sum of item prices ({total_price}).")
+
+        return total 
 
 
 
