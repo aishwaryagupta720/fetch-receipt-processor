@@ -68,7 +68,12 @@ pip install -r requirements.txt
 
 ### **2. Run the FastAPI Application**
 ```sh
-uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+uvicorn app.main:app --host 0.0.0.0 --port 8000 
+```
+
+### **2.1 (Optional) Run the FastAPI Application with multiple threads**
+```sh
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --workers 4
 ```
 
 ### **Access the API Documentation**
