@@ -6,16 +6,18 @@ from app.dependencies import get_receipt_service
 
 router = APIRouter()
 
+receipt_service = get_receipt_service()
+
 @router.post("/receipts/process", response_model=ReceiptResponse)
-def process_receipt(receipt: Receipt, service: ReceiptService = Depends(get_receipt_service)):
+def process_receipt(receipt: Receipt):
     """Stores receipt and returns a unique receipt ID."""
-    receipt_id = service.process_receipt(receipt)
+    receipt_id = receipt_service.process_receipt(receipt)
     return {"id": receipt_id}
 
 @router.get("/receipts/{id}/points", response_model=PointsResponse)
-def get_receipt_points(id: str, service: ReceiptService = Depends(get_receipt_service)):
+def get_receipt_points(id: str):
     """Retrieves points for the given receipt ID."""
-    points = service.get_points(id)
+    points = receipt_service.get_points(id)
     if points is None:
         raise HTTPException(status_code=404, detail="No receipt found for that ID.")
     return {"points": points}

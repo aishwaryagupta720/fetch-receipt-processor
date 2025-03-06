@@ -1,5 +1,4 @@
 import threading
-from uuid import uuid4
 from app.services.storage import StorageInterface
 
 class InMemoryStorage(StorageInterface):
