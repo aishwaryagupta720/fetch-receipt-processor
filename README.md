@@ -76,6 +76,16 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000
 uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 4
 ```
 
+### **3. Run all tests:**
+```sh
+pytest
+```
+
+### **4. Run a specific test file:**
+```sh
+pytest tests/test_models.py
+```
+
 ### **Access the API Documentation**
 - **Swagger UI:** [http://localhost:8000/docs](http://localhost:8000/docs)
 - **Redoc UI:** [http://localhost:8000/redoc](http://localhost:8000/redoc)
@@ -116,19 +126,6 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 4
   "points": 17
 }
 ```
-
-## **Running Tests with Pytest**
-
-### **Run all tests:**
-```sh
-pytest
-```
-
-### **Run a specific test file:**
-```sh
-pytest tests/test_models.py
-```
-
 ---
 
 ## **Rules for Points Calculation**
