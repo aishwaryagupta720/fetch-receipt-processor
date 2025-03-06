@@ -2,6 +2,7 @@ import math
 from app.models.receipt import Receipt
 from app.services.storage import StorageInterface
 from datetime import datetime
+from uuid import uuid4
 
 class ReceiptService:
     """Handles business logic for receipts using dependency injection."""
@@ -11,17 +12,19 @@ class ReceiptService:
 
     def process_receipt(self, receipt: Receipt) -> str:
         """Stores the receipt and precomputes points."""
-        receipt_dict = receipt.dict()
-        
 
-        #Save receipt 
-        receipt_id = self.storage.save_receipt(receipt_dict)
+        receipt_id = str(uuid4())
+
+        receipt_dict = receipt.model_dump()
         
         # Precompute points 
         points = self.calculate_points(receipt_dict)
 
         # Store points in memory 
-        self.storage.save_points(receipt_id, points)  
+        self.storage.save_points(receipt_id, points) 
+
+        #Save receipt 
+        self.storage.save_receipt(receipt_id,receipt_dict)
 
         return receipt_id
 

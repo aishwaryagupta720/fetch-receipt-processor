@@ -12,44 +12,48 @@ class Receipt(BaseModel):
     retailer: str = Field(..., pattern=r"^[\w\s\-\&]+$", description="Retailer name")
     purchaseDate: str = Field(..., description="YYYY-MM-DD format")
     purchaseTime: str = Field(..., description="24-hour HH:MM format")
-    items: List[Item] = Field(..., min_items=1, description="At least one item is required")
+    items: List[Item] = Field(..., min_length=1, description="At least one item is required")
     total: str = Field(..., pattern=r"^\d+\.\d{2}$", description="Total must be a valid decimal format")
 
-    @validator("purchaseDate")
+
+    @field_validator("purchaseDate", mode="before")
+    @classmethod
     def validate_purchase_date(cls, value):
-        """Convert string to date object and validate."""
+        """Validates `purchaseDate` format and ensures it is not null or empty."""
+        if not value:
+            raise ValueError("purchaseDate cannot be null or empty.")
         try:
-            date_obj = datetime.strptime(value, "%Y-%m-%d").date()
-            return value  # Store as string (per OpenAPI spec)
+            datetime.strptime(value, "%Y-%m-%d")
         except ValueError:
             raise ValueError("Invalid purchaseDate format. Expected YYYY-MM-DD.")
+        return value
 
-    @validator("purchaseTime")
-    def validate_purchase_time(cls, value):
-        """Convert string to time object and validate."""
-        try:
-            time_obj = datetime.strptime(value, "%H:%M").time()
-            return value  # Store as string (per OpenAPI spec)
-        except ValueError:
-            raise ValueError("Invalid purchaseTime format. Expected HH:MM (24-hour).")
-        
     @field_validator("purchaseTime", mode="after")
     @classmethod
     def validate_purchase_time(cls, value: str, values: ValidationInfo):
-        """Ensure `purchaseTime` is in the past, considering `purchaseDate`."""
+        """Validates `purchaseTime` format and ensures it's not in the future."""
+        if not value:
+            raise ValueError("purchaseTime cannot be null or empty.")
 
-        # Get validated purchaseDate
-        purchase_date = datetime.strptime(values.data.get("purchaseDate"), "%Y-%m-%d").date()
-        purchase_time = datetime.strptime(value, "%H:%M").time()
+        # Validate format
+        try:
+            purchase_time = datetime.strptime(value, "%H:%M").time()
+        except ValueError:
+            raise ValueError("Invalid purchaseTime format. Expected HH:MM (24-hour).")
 
-        # Get current time
-        now = datetime.now()
-        purchase_datetime = datetime.combine(purchase_date, purchase_time)
-
-        if purchase_datetime > now:
-            raise ValueError("Purchase cannot be in the future.")
+        # Ensure purchaseTime is in the past
+        purchase_date = values.data.get("purchaseDate")
+        if purchase_date:
+            try:
+                purchase_date = datetime.strptime(purchase_date, "%Y-%m-%d").date()
+                purchase_datetime = datetime.combine(purchase_date, purchase_time)
+                if purchase_datetime > datetime.now():
+                    raise ValueError("Purchase cannot be in the future.")
+            except ValueError:
+                raise ValueError("Invalid purchaseDate format while validating purchaseTime.")
 
         return value
+
     
     @field_validator("total", mode="after")
     @classmethod
