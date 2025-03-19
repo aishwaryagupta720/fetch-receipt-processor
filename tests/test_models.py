@@ -54,7 +54,7 @@ def test_purchase_date_validation(purchaseDate, should_raise):
     ("10.01", [{"shortDescription": "Item A", "price": "10.00"}], True),  # Mismatch
 ])
 def test_total_validation(total, items, should_raise):
-    """Ensure total matches sum of items."""
+    """Ensure total matches the sum of items."""
     receipt_data = {
         "retailer": "Target",
         "purchaseDate": "2022-01-01",
@@ -62,9 +62,12 @@ def test_total_validation(total, items, should_raise):
         "items": items,
         "total": total
     }
-    if should_raise:
-        with pytest.raises(ValidationError):
-            Receipt(**receipt_data)
-    else:
+
+    expected_total = f"{sum(float(item['price']) for item in items):.2f}"
+
+    try:
         receipt = Receipt(**receipt_data)
-        assert receipt.total == total
+        assert not should_raise, f"Expected validation error for total={total}, but none occurred."
+        assert receipt.total == expected_total, f"Expected total={expected_total}, but got {receipt.total}"
+    except ValidationError:
+        assert should_raise, f"Unexpected validation error for total={total}"
