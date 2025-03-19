@@ -13,3 +13,13 @@ class StorageInterface(ABC):
     def get_receipt(self, receipt_id: str) -> Optional[dict]:
         """Retrieve a receipt by ID."""
         pass
+    
+    @abstractmethod
+    def save_points(self, receipt_id: str, points: int) -> None:
+        """Save receipt points by ID."""
+        pass
+
+    @abstractmethod
+    def get_points(self, receipt_id: str)-> Optional[int]:
+        """Get receipt points by ID."""
+        pass

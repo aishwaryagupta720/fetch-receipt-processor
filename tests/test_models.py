@@ -41,12 +41,12 @@ def test_purchase_date_validation(purchaseDate, should_raise):
         "items": [{"shortDescription": "Item A", "price": "10.00"}],
         "total": "10.00"
     }
-    if should_raise:
-        with pytest.raises(ValidationError):
-            Receipt(**receipt_data)
-    else:
+    try:
         receipt = Receipt(**receipt_data)
-        assert receipt.purchaseDate == purchaseDate
+        assert not should_raise, f"Expected validation error for {purchaseDate}, but none occurred."
+        assert receipt.purchaseDate == purchaseDate, f"Expected {purchaseDate}, but got {receipt.purchaseDate}"
+    except ValidationError:
+        assert should_raise, f"Unexpected validation error for {purchaseDate}"
 
 @pytest.mark.parametrize("total, items, should_raise", [
     ("10.00", [{"shortDescription": "Item A", "price": "10.00"}], False),
